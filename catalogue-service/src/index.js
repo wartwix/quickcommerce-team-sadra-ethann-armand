@@ -1,17 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
+// On importe la config centralisée pour que les routes fonctionnent
+const db = require('./config/database'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// Configuration BDD
-const db = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'catalogue',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres'
-});
 
 // Middleware
 app.use(cors());
@@ -25,6 +18,14 @@ app.get('/health', async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: 'unhealthy' });
   }
+});
+
+// Version endpoint
+app.get('/version', (req, res) => {
+  res.json({ 
+    service: 'catalogue-service', 
+    version: '1.0.0' 
+  });
 });
 
 // Routes produits
