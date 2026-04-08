@@ -32,6 +32,15 @@ const productsRouter = require('./routes/products');
 app.use('/products', productsRouter);
 
 
+app.get('/version', (req, res) => {
+  res.json({ 
+    service: 'catalogue', 
+    version: '1.0.1',
+    team: 'QuickCommerce Team sadra-ethann-armand',
+    date: new Date().toISOString()
+  });
+});
+
 
 app.listen(PORT, () => {
   console.log(`📦 Catalogue Service - Port ${PORT}`);
