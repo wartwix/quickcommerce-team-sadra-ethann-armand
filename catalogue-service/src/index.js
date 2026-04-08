@@ -31,6 +31,7 @@ app.get('/health', async (req, res) => {
 const productsRouter = require('./routes/products');
 app.use('/products', productsRouter);
 
+
 app.get('/version', (req, res) => {
   res.json({ 
     service: 'catalogue', 
@@ -39,6 +40,7 @@ app.get('/version', (req, res) => {
     date: new Date().toISOString()
   });
 });
+
 
 app.listen(PORT, () => {
   console.log(`📦 Catalogue Service - Port ${PORT}`);
