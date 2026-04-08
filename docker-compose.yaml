@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # SERVICE CATALOGUE
+  catalogue-service:
+    build: ./catalogue-service
+    ports:
+      - "3001:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: catalogue-db
+      DB_NAME: catalogue
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      - catalogue-db
+    networks:
+      - microservices-net
+
+  catalogue-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: catalogue
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - catalogue-data:/var/lib/postgresql/data
+      - ./catalogue-service/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-net
+
+  # SERVICE PANIER
+  panier-service:
+    build: ./panier-service
+    ports:
+      - "3002:3000"
+    environment:
+      PORT: 3000
+      REDIS_HOST: redis
+      CATALOGUE_SERVICE_URL: http://catalogue-service:3001
+    depends_on:
+      - redis
+      - catalogue-service
+    networks:
+      - microservices-net
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - microservices-net
+
+  # SERVICE COMMANDES
+  commandes-service:
+    build: ./commandes-service
+    ports:
+      - "3003:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: commandes-db
+      DB_NAME: commandes
+      PANIER_SERVICE_URL: http://panier-service:3002
+      CATALOGUE_SERVICE_URL: http://catalogue-service:3001
+    depends_on:
+      - commandes-db
+      - panier-service
+      - catalogue-service
+    networks:
+      - microservices-net
+
+  commandes-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: commandes
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - commandes-data:/var/lib/postgresql/data
+      - ./commandes-service/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+
+volumes:
+  catalogue-data:
+  commandes-data:
