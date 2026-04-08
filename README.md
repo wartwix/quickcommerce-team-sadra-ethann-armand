@@ -1,1 +1,1 @@
-#quickcommerce-Alpha 
+#quickcommerce-Alpha
