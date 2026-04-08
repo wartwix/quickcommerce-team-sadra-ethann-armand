@@ -31,6 +31,8 @@ app.get('/health', async (req, res) => {
 const productsRouter = require('./routes/products');
 app.use('/products', productsRouter);
 
+
+
 app.listen(PORT, () => {
   console.log(`📦 Catalogue Service - Port ${PORT}`);
 });
